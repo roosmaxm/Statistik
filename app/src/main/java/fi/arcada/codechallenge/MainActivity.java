@@ -1,5 +1,7 @@
 package fi.arcada.codechallenge;
 
+import static fi.arcada.codechallenge.Statistics.calcMean;
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
@@ -40,14 +42,7 @@ public class MainActivity extends AppCompatActivity {
         outputText.setText(inputText.getText().toString());
     }
     public void calculator(View view){
-        double average = calculate();
-        result.setText(String.format("%.2f", average));
+        result.setText(String.format("%.2f", calcMean(values)));
     }
-    public double calculate() {
-        double sum = 0;
-        for (double value : values) {
-            sum += value;
-        }
-        return sum / values.length;
-    }
+
 }
