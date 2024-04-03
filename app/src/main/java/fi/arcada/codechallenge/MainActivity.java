@@ -21,8 +21,9 @@ public class MainActivity extends AppCompatActivity {
 
     TextView outputText;
     EditText inputText;
+    String[] names = {"Max", "Oliver", "Ben", "Alva", "Netta", "Olivia", "Morris", "Benjamin"};
     double [] testData = {12, 3, 53.2 ,7, 65, 55, 43, 21};
-    ArrayList<Double> values = new ArrayList<>();
+    ArrayList<DataItem> dataItems = new ArrayList<>();
     TextView result;
 
     @Override
@@ -34,9 +35,9 @@ public class MainActivity extends AppCompatActivity {
         inputText = findViewById(R.id.inputText);
         result = findViewById(R.id.result);
 
-        //VI fyller vår arraylist med värdena från testData
-        for (double value : testData){
-            values.add(value);
+        //Vi fyller vår arraylist med värdena från testData
+        for (int i = 0; i < testData.length; i++){
+            dataItems.add(new DataItem(names[i], testData[i]));
         }
 
 
@@ -49,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
     }
     @SuppressLint("DefaultLocale")
     public void calculator(View view){
+        ArrayList<Double> values = new ArrayList<>();
+        for (DataItem item: dataItems){
+            values.add(item.getValue());
+        }
         result.setText(String.format("Medelvärde: %.2f\nMedian: %.2f\nStandardavvikelse: %.2f",
                 calcMean(values),
                 Statistics.calcMedian(values),
