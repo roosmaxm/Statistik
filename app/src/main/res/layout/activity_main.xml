@@ -11,14 +11,17 @@
         android:id="@+id/outText"
         android:layout_width="270dp"
         android:layout_height="69dp"
-        android:layout_marginStart="48dp"
+        android:layout_marginStart="52dp"
         android:layout_marginTop="136dp"
         android:layout_marginBottom="403dp"
         android:text="Code Challenge"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.027"
         app:layout_constraintStart_toStartOf="@+id/inputText"
-        app:layout_constraintTop_toBottomOf="@+id/inputText" />
+        app:layout_constraintTop_toBottomOf="@+id/inputText"
+        app:layout_constraintVertical_bias="1.0" />
 
     <EditText
         android:id="@+id/inputText"
@@ -48,7 +51,7 @@
         android:id="@+id/calculate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
+        android:layout_marginTop="12dp"
         android:onClick="calculator"
         android:text="Calculate"
         app:layout_constraintEnd_toEndOf="parent"
@@ -56,27 +59,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/outText" />
 
-    <EditText
-        android:id="@+id/result"
-        android:layout_width="394dp"
-        android:layout_height="216dp"
-        android:ems="10"
-        android:inputType="text"
-        android:textAlignment="center"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.492"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calculate"
-        app:layout_constraintVertical_bias="0.636" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
-        android:layout_width="407dp"
-        android:layout_height="553dp"
+        android:layout_width="404dp"
+        android:layout_height="105dp"
+        android:layout_marginBottom="56dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.547"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/result"
+        android:layout_width="225dp"
+        android:layout_height="109dp"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calculate" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

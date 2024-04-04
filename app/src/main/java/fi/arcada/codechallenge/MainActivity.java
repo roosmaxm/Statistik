@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -21,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView outputText;
     EditText inputText;
+    RecyclerView recyclerView;
     String[] names = {"Max", "Oliver", "Ben", "Alva", "Netta", "Olivia", "Morris", "Benjamin"};
     double [] testData = {12, 3, 53.2 ,7, 65, 55, 43, 21};
     ArrayList<DataItem> dataItems = new ArrayList<>();
@@ -33,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
         outputText = findViewById(R.id.outText);
         inputText = findViewById(R.id.inputText);
+        recyclerView = findViewById(R.id.recyclerView);
         result = findViewById(R.id.result);
 
         //Vi fyller vår arraylist med värdena från testData
@@ -41,8 +45,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        outputText.setText("Min app fungerar");
-//Hej
+        outputText.setText("");
+
+        DataItemViewAdapter adapter = new DataItemViewAdapter(this, dataItems);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
 
     }
     public void buttonHandler(View view){
@@ -54,10 +62,16 @@ public class MainActivity extends AppCompatActivity {
         for (DataItem item: dataItems){
             values.add(item.getValue());
         }
-        result.setText(String.format("Medelvärde: %.2f\nMedian: %.2f\nStandardavvikelse: %.2f",
+        result.setText(String.format("Medelvärde: %.2f\nMedian: %.2f\nStandardavvikelse: %.2f\nLQ: %.2f\nUQ: %.2f\nIQR: %.2f",
                 calcMean(values),
                 Statistics.calcMedian(values),
-                Statistics.calcStdev(values)
+                Statistics.calcStdev(values),
+                Statistics.calcLQ(values),
+                Statistics.calcUQ(values),
+                Statistics.calcIQR(values)
+
+
+
         ));
     }
 
