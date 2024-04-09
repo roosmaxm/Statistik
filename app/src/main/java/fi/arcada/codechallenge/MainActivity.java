@@ -3,6 +3,7 @@ package fi.arcada.codechallenge;
 import static fi.arcada.codechallenge.Statistics.calcMean;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -28,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     SharedPreferences prefs;
     SharedPreferences.Editor prefsEditor;
-    SharedPreferences counter;
+    TextView greetingText;
 
     String[] names = {"Max", "Oliver", "Ben", "Alva", "Netta", "Olivia", "Morris", "Benjamin"};
     double [] testData = {12, 3, 53.2 ,7, 65, 55, 43, 21};
@@ -44,9 +45,12 @@ public class MainActivity extends AppCompatActivity {
         inputText = findViewById(R.id.inputText);
         recyclerView = findViewById(R.id.recyclerView);
         result = findViewById(R.id.result);
+        greetingText = findViewById(R.id.greetingText);
+
 
         // SharedPreference
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
 
         // Öppna editorn
         prefsEditor = prefs.edit();
@@ -76,6 +80,19 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    public void onResume() {
+        super.onResume();
+        String greeting = prefs.getString("greeting", "Hello");
+        greetingText = findViewById(R.id.greetingText);
+        greetingText.setText(greeting);
+    }
+
+    public void openSettings(View view){
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
     public void buttonHandler(View view){
         String text = inputText.getText().toString();
         outputText.setText(text);
