@@ -1,125 +1,62 @@
 package fi.arcada.codechallenge;
 
-import static fi.arcada.codechallenge.Statistics.calcMean;
-
-import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 
 import java.util.ArrayList;
-import java.util.Locale;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
-    TextView outputText;
-    EditText inputText;
-    RecyclerView recyclerView;
-    SharedPreferences prefs;
-    SharedPreferences.Editor prefsEditor;
-    TextView greetingText;
-
-    String[] names = {"Max", "Oliver", "Ben", "Alva", "Netta", "Olivia", "Morris", "Benjamin"};
-    double [] testData = {12, 3, 53.2 ,7, 65, 55, 43, 21};
-    ArrayList<DataItem> dataItems = new ArrayList<>();
-    TextView result;
+    double[] temps = {4.7, -4.8, -1.8, 0.7, 0.1, -6, -7.8, -7, -3.8, -10.6, -10.3, -0.3, 4.8, 2.6, 0.1, 1.2, -1.5, -2.7, 1.8, 0.2, -2, -5.5, -1.3, 2.1, -0.6, -0.9, 1, -0.5, -1.4, -1.6, -5.3, -7.7, -8.2, -9.5, -3.9, -0.4, 1, 0.8, -0.4, 0.6, 1, -1.5, -0.5, 1.4, 1.5, 1.8, 2, 1.1, -0.1, 0.1, -0.7, -0.4, -3, -6.8, 2, 1.5, -1.3, -0.2, 1.6, 1.9, 1.3, 0.6, -2, -2.4, 0.8, -0.3, -2.5, -2.6, -0.7, 1.8, 1.3, 0.9, 3, 0.7, 0.8, 1.6, 2.5, 2, 6.2};
+    LineChart chart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        outputText = findViewById(R.id.outText);
-        inputText = findViewById(R.id.inputText);
-        recyclerView = findViewById(R.id.recyclerView);
-        result = findViewById(R.id.result);
-        greetingText = findViewById(R.id.greetingText);
+        chart = findViewById(R.id.chart);
 
+        displayDataWithMovingAverage(temps, "Temperature", 3);
 
-        // SharedPreference
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        System.out.println(Arrays.toString(Statistics.movingAvg(temps, 3)));
+    }
 
+    public void displayDataWithMovingAverage(double[] values, String label, int windowSize) {
+        List<Entry> entries = new ArrayList<>();
+        double[] movingAvg = Statistics.movingAvg(values, windowSize);
 
-        // Öppna editorn
-        prefsEditor = prefs.edit();
-
-        // Läs värde från SharedPreferences
-        int appStartCount = prefs.getInt("counter", 0);
-
-        // Lägg till värde till SharedPreferences och öka med 1
-        prefsEditor.putInt("counter", appStartCount + 1);
-
-        // Spara ändringen
-        prefsEditor.apply();
-
-        // Visa värdet
-        outputText.setText("Times you have opened app: " + appStartCount);
-
-
-        //Vi fyller vår arraylist med värdena från testData
-        for (int i = 0; i < testData.length; i++){
-            dataItems.add(new DataItem(names[i], testData[i]));
+        for (int i = 0; i < values.length; i++) {
+            entries.add(new Entry(i, (float) values[i]));
         }
 
+        LineDataSet dataSet = new LineDataSet(entries, label);
+        dataSet.setColor(Color.RED);
+        dataSet.setDrawValues(false);
+        dataSet.setDrawCircles(false);
 
-        DataItemViewAdapter adapter = new DataItemViewAdapter(this, dataItems);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        LineDataSet avgDataSet = new LineDataSet(getMovingAverageEntries(movingAvg), "Moving Average");
+        avgDataSet.setColor(Color.BLUE);
+        avgDataSet.setDrawValues(false);
+        avgDataSet.setDrawCircles(false);
 
+        LineData lineData = new LineData(dataSet, avgDataSet);
 
+        chart.setData(lineData);
+        chart.invalidate();
     }
 
-    public void onResume() {
-        super.onResume();
-        String greeting = prefs.getString("greeting", "Hello");
-        greetingText = findViewById(R.id.greetingText);
-        greetingText.setText(greeting);
-    }
-
-    public void openSettings(View view){
-        Intent intent = new Intent(this, SettingsActivity.class);
-        startActivity(intent);
-    }
-
-    public void buttonHandler(View view){
-        String text = inputText.getText().toString();
-        outputText.setText(text);
-
-        // Lägg till värde till SharedPreferences
-        SharedPreferences.Editor prefsEditor;
-        prefsEditor = prefs.edit();
-        prefsEditor.putString("lastText", text);
-        prefsEditor.apply();
-    }
-    @SuppressLint("DefaultLocale")
-    public void calculator(View view){
-        ArrayList<Double> values = new ArrayList<>();
-        for (DataItem item: dataItems){
-            values.add(item.getValue());
+    private List<Entry> getMovingAverageEntries(double[] movingAvg) {
+        List<Entry> avgEntries = new ArrayList<>();
+        for (int i = 0; i < movingAvg.length; i++) {
+            avgEntries.add(new Entry(i, (float) movingAvg[i]));
         }
-        result.setText(String.format("Medelvärde: %.2f\nMedian: %.2f\nStandardavvikelse: %.2f\nLQ: %.2f\nUQ: %.2f\nIQR: %.2f",
-                calcMean(values),
-                Statistics.calcMedian(values),
-                Statistics.calcStdev(values),
-                Statistics.calcLQ(values),
-                Statistics.calcUQ(values),
-                Statistics.calcIQR(values)
-
-
-
-        ));
+        return avgEntries;
     }
-
 }
